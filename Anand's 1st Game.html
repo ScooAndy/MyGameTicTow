@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>Anand 1st Game</title>
+    <head>
+        <style type="text/css">
+            body {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: linear-gradient(to bottom right, #4c669f, #3b5998);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.game-screen,
+.result-screen {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.cell {
+  background: #ddd;
+  border: 1px solid #aaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.button {
+  font-size: 1rem;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.button:hover {
+  background-color: #45a049;
+}
+
+.button:focus {
+  outline: none;
+}
+
+        </style>
+       
+    </head>
+    <body>
+        <div class="container">
+  <div class="game-screen" id="gameScreen">
+    <h1>Anand's Game</h1>
+    <h2>Tic Tac Toe</h2>
+    <div id="board" class="board">
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+    </div>
+    <div class="message" id="message">Player X's Turn</div>
+    <button id="restart">Restart Game</button>
+  </div>
+  <div class="result-screen" id="resultScreen" style="display: none;">
+    <h2>Game Over</h2>
+    <div id="resultMessage"></div>
+    <button id="newGame">New Game</button>
+  </div>
+</div>
+    </body>
+ <script type="text/javascript">
+            const gameScreen = document.getElementById("gameScreen");
+const resultScreen = document.getElementById("resultScreen");
+const resultMessage = document.getElementById("resultMessage");
+const cells = document.querySelectorAll("[data-cell]");
+const message = document.getElementById("message");
+const restartButton = document.getElementById("restart");
+const newGameButton = document.getElementById("newGame");
+let currentPlayer = "X";
+let isGameActive = true;
+
+const winningCombos = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6]
+];
+
+const handleCellClick = (e) => {
+  const cell = e.target;
+  const index = parseInt(cell.getAttribute("data-index"));
+
+  if (cell.textContent !== "" || !isGameActive) return;
+
+  cell.textContent = currentPlayer;
+  if (checkWin(currentPlayer)) {
+    showResult(`Player ${currentPlayer} wins!`);
+    isGameActive = false;
+    return;
+  }
+  if (checkDraw()) {
+    showResult("It's a draw!");
+    isGameActive = false;
+    return;
+  }
+
+  currentPlayer = currentPlayer === "X" ? "O" : "X";
+  message.textContent = `Player ${currentPlayer}'s Turn`;
+};
+
+const checkWin = (player) => {
+  return winningCombos.some((combo) => {
+    return combo.every((index) => {
+      return cells[index].textContent === player;
+    });
+  });
+};
+
+const checkDraw = () => {
+  return [...cells].every((cell) => {
+    return cell.textContent !== "";
+  });
+};
+
+const showResult = (msg) => {
+  gameScreen.style.display = "none";
+  resultScreen.style.display = "block";
+  resultMessage.textContent = msg;
+};
+
+const restartGame = () => {
+  cells.forEach((cell) => {
+    cell.textContent = "";
+  });
+  currentPlayer = "X";
+  isGameActive = true;
+  message.textContent = "Player X's Turn";
+  gameScreen.style.display = "block";
+  resultScreen.style.display = "none";
+};
+
+cells.forEach((cell, index) => {
+  cell.setAttribute("data-index", index);
+  cell.addEventListener("click", handleCellClick);
+});
+
+restartButton.addEventListener("click", restartGame);
+newGameButton.addEventListener("click", restartGame);
+
+        </script>
+</html>
